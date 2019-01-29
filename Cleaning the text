@@ -1,0 +1,86 @@
+import os
+from wordcloud import WordCloud, STOPWORDS
+import matplotlib.pyplot as plt
+import pandas as pd
+import nltk
+#nltk.use('TkAgg')
+from nltk.tokenize import sent_tokenize, word_tokenize
+#nltk.download()
+
+path = '/Users/shailaja/Desktop/bigdata_project/Text'
+i=0
+for itemName in os.listdir(path):
+    itemName = os.path.join(path, itemName)
+    #print("itemName",itemName)
+    #stop_words = set(stopwords.words("english"))
+    stopwords = set(STOPWORDS)
+    if os.path.isfile(itemName):
+        file= open(itemName, 'r')
+        text=file.read()
+        file.close()
+        #sentence=sent_tokenize(text)
+        #print(type(text))
+        print("/n/n/n/n/**********************TOKENS*****************************")
+        word_tokens = word_tokenize(text)
+        """
+        words = [word for word in word_tokens if word.isalnum()]
+        strng=" "
+        #print(type(words))
+        for word in words:
+            #print("i",i)
+            strng+=word+" "
+        print(strng)
+        wordcloud = WordCloud(width=2000, height=2000, stopwords=stopwords, min_font_size=10).generate(strng)
+        plt.tight_layout()
+        plt.axis("off")
+        plt.imshow(wordcloud)
+        plt.show()
+        """
+        ####frequency of words
+        #print(len(word_tokens))
+        from nltk.probability import FreqDist
+        fdist=FreqDist(word_tokens)
+        total_word=fdist.most_common()
+        ####doesnt include special word
+        import re
+        punctuation=re.compile(r'[-.?!,:;()|0-9]')
+        post_punctuation=[]
+        for words in word_tokens:
+            word=punctuation.sub("",words)
+            if len(word)>0:
+                post_punctuation.append(word)
+        #print((post_punctuation))
+        ##Part of speech(POS)
+        #print(post_punctuation)
+        #words_list=[]
+        words_list_tagged=nltk.pos_tag(post_punctuation)
+        #print(words_list)
+        ###named entity recognization
+        from nltk import ne_chunk
+
+        words_ne_chunk=ne_chunk(words_list_tagged,binary=True)
+        print(words_ne_chunk)
+        #chunkGram=r"""Chunk:{<RB.?>*<VB.?>*<NNP><NN>?}"""
+        #chunkParse=nltk.RegexpParser(chunkGram)
+        #chunked=chunkParse.parse(words_list_tagged)
+        #print(chunked)
+        words_ne_chunk.draw()
+
+
+
+
+
+        """
+        dic={}
+        for word in word_tokens:
+            if word in dic:
+                dic[word]+=1
+            else:
+                dic[word]=1
+            #fdist[word]+=1
+            #print("s")
+        print(dic)
+        """
+    i+=1
+    if i==1:
+        break
